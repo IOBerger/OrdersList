@@ -15,10 +15,10 @@ type OrderFieldState = {
 export default class OrderField extends React.Component<{},OrderFieldState> {
     state : OrderFieldState = {
         orders: [],
-        inputAddOrder: new OrderFromForm('','','',''),
+        inputAddOrder: new OrderFromForm('','','','',''),
         admin: false,
         editIndex: 0,
-        inputEditOrder: new OrderFromForm('','','',''),
+        inputEditOrder: new OrderFromForm('','','','',''),
     };
     //подсчёт количества заявок
     countOrders = () => {
@@ -42,6 +42,13 @@ export default class OrderField extends React.Component<{},OrderFieldState> {
         this.setState({ inputAddOrder: {
             ...this.state.inputAddOrder,
             name: String(event.target.value),
+        } });
+    };
+    //Сохраняем изменения в названии перевозчика
+    handleChangeAddDriver = (event:any) => {
+        this.setState({ inputAddOrder: {
+            ...this.state.inputAddOrder,
+            driver: String(event.target.value),
         } });
     };
     //Сохраняем изменения в телефоне
@@ -80,12 +87,13 @@ export default class OrderField extends React.Component<{},OrderFieldState> {
                     id: this.state.orders.length+1, 
                     date: new Date(),
                     name: order.name,
+                    driver: order.driver,
                     phone: order.phone,
                     ati: Number(order.ati),
                     comments: order.comments
                 } 
             ],
-            inputAddOrder : new OrderFromForm('','','',''),
+            inputAddOrder : new OrderFromForm('','','','',''),
         });
     };
     //удаление заявки
@@ -99,6 +107,13 @@ export default class OrderField extends React.Component<{},OrderFieldState> {
         this.setState({ inputEditOrder: {
             ...this.state.inputEditOrder,
             name: String(text),
+        } });        
+    }
+    //сохраняем изменения поля перевозчика
+    changeEditInputDriver = (text:string) => {
+        this.setState({ inputEditOrder: {
+            ...this.state.inputEditOrder,
+            driver: String(text),
         } });        
     }
     //сохраняем изменения поля телефона
@@ -134,11 +149,12 @@ export default class OrderField extends React.Component<{},OrderFieldState> {
                 id:leftOrders[id-1].id,
                 date:leftOrders[id-1].date,
                 name: order.name,
+                driver: order.driver,
                 phone: order.phone,
                 ati: Number(order.ati),
                 comments: order.comments
             }
-            this.setState({orders: leftOrders, editIndex: 0,inputEditOrder:new OrderFromForm('','','','')});    
+            this.setState({orders: leftOrders, editIndex: 0,inputEditOrder:new OrderFromForm('','','','','')});    
         }else{
             alert('Ошибка в данных!');
         }
@@ -158,6 +174,7 @@ export default class OrderField extends React.Component<{},OrderFieldState> {
                 editIndex={this.state.editIndex}
                 editOrder={this.editOrder}
                 changeEditInputName={this.changeEditInputName}
+                changeEditInputDriver={this.changeEditInputDriver}
                 changeEditInputPhone={this.changeEditInputPhone}
                 changeEditInputAti={this.changeEditInputAti}
                 changeEditInputComments={this.changeEditInputComments}
@@ -176,6 +193,13 @@ export default class OrderField extends React.Component<{},OrderFieldState> {
                         onKeyUp={ (event) => this.handleKeyUpAddOrder(event, this.state.inputAddOrder) }
                         autoFocus={true}
                         placeholder="Название фирмы"
+                    />
+                    <input
+                        onChange={ this.handleChangeAddDriver }
+                        value={ this.state.inputAddOrder.driver }
+                        onKeyUp={ (event) => this.handleKeyUpAddOrder(event, this.state.inputAddOrder) }
+                        autoFocus={true}
+                        placeholder="Имя перевозчика"
                     />
                     <input
                         onChange={ this.handleChangeAddPhone }

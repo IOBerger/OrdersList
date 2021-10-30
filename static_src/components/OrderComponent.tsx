@@ -12,6 +12,7 @@ type OrderProps = {//типы свойств компонента
     inputEditOrder:OrderFromForm,//в объекте хранится то, что прямо сейчас в формах
     //функции, сохраняющие изменения в формах
     changeEditInputName: (text:string) => void,
+    changeEditInputDriver: (text:string) => void,
     changeEditInputPhone:(text:string) => void,
     changeEditInputAti:(text:string) => void,
     changeEditInputComments:(text:string) => void,
@@ -35,21 +36,27 @@ export default class OrderComponent extends React.Component<OrderProps,{}> {
                     <p> Заявка № {this.props.order.id} от {dateSrting}:</p>
                 </div>
                 <div> 
-            { this.props.order.name }|{ this.props.order.phone }|<a href={"https://ati.su/firms/" +this.props.order.ati+ '/info'}>Ati</a>|{ this.props.order.comments }
+                { this.props.order.name }|{ this.props.order.driver }|{ this.props.order.phone }|<a href={"https://ati.su/firms/" +this.props.order.ati+ '/info'}>Ati</a>|{ this.props.order.comments }
             </div></div>
         }else{
             //рисуем форму изменения заявки
-            let editValueName:string = this.props.inputEditOrder.name==='' ? this.props.order.name : this.props.inputEditOrder.name;//?????было 0 а не ''
+            let editValueName:string = this.props.inputEditOrder.name==='' ? this.props.order.name : this.props.inputEditOrder.name;
+            let editValueDriver:string = this.props.inputEditOrder.driver==='' ? this.props.order.driver : this.props.inputEditOrder.driver;
             let editValuePhone:string = this.props.inputEditOrder.phone==='' ? this.props.order.phone : this.props.inputEditOrder.phone;
             let editValueAti:string = this.props.inputEditOrder.ati==='' ? String(this.props.order.ati) : this.props.inputEditOrder.ati;
             let editValueComments:string = this.props.inputEditOrder.comments==='' ? this.props.order.comments : this.props.inputEditOrder.comments;
-            resultOrder=new OrderFromForm(editValueName,editValuePhone,editValueAti,editValueComments);
+            resultOrder=new OrderFromForm(editValueName,editValueDriver,editValuePhone,editValueAti,editValueComments);
             
             orderText= <div><div> Заявка № { this.props.order.id} от {dateSrting}: </div> 
                 <div>
                 <input 
                     onChange={ (event) => this.props.changeEditInputName(event.target.value) }
                     value={ editValueName }
+                    onKeyUp={ (event) => this.editByEnter(event,resultOrder) } 
+                />
+                <input 
+                    onChange={ (event) => this.props.changeEditInputDriver(event.target.value) }
+                    value={ editValueDriver }
                     onKeyUp={ (event) => this.editByEnter(event,resultOrder) } 
                 />
                 <input 
