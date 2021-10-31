@@ -11,21 +11,16 @@ type OrderProps = {//типы свойств компонента
     editOrder:(id: number, order:OrderFromForm) => void,//функция изменения заявки
     inputEditOrder:OrderFromForm,//в объекте хранится то, что прямо сейчас в формах
     //функции, сохраняющие изменения в формах
-    changeEditInputName: (text:string) => void,
-    changeEditInputDriver: (text:string) => void,
-    changeEditInputPhone:(text:string) => void,
-    changeEditInputAti:(text:string) => void,
-    changeEditInputComments:(text:string) => void,
+    changeEditInput: (event:any) => void,
 }
 
 //компонент, рисующий одну заявку
 export default class OrderComponent extends React.Component<OrderProps,{}> {
-    //изменение заявки нажатием enter
     editByEnter = (event: any, resultOrder:OrderFromForm) => {
         if (event.keyCode === 13) { // Enter
             this.props.editOrder(this.props.order.id,resultOrder);
         }
-    }; 
+    };
    render():React.ReactNode {
         let orderText : React.ReactNode;  
         let dateSrting:string = this.props.order.date.toString();  
@@ -38,41 +33,46 @@ export default class OrderComponent extends React.Component<OrderProps,{}> {
                 <div> 
                 { this.props.order.name }|{ this.props.order.driver }|{ this.props.order.phone }|<a href={"https://ati.su/firms/" +this.props.order.ati+ '/info'}>Ati</a>|{ this.props.order.comments }
             </div></div>
-        }else{
-            //рисуем форму изменения заявки
-            let editValueName:string = this.props.inputEditOrder.name==='' ? this.props.order.name : this.props.inputEditOrder.name;
-            let editValueDriver:string = this.props.inputEditOrder.driver==='' ? this.props.order.driver : this.props.inputEditOrder.driver;
-            let editValuePhone:string = this.props.inputEditOrder.phone==='' ? this.props.order.phone : this.props.inputEditOrder.phone;
-            let editValueAti:string = this.props.inputEditOrder.ati==='' ? String(this.props.order.ati) : this.props.inputEditOrder.ati;
-            let editValueComments:string = this.props.inputEditOrder.comments==='' ? this.props.order.comments : this.props.inputEditOrder.comments;
-            resultOrder=new OrderFromForm(editValueName,editValueDriver,editValuePhone,editValueAti,editValueComments);
-            
+        }else{            
+            resultOrder=new OrderFromForm(
+                this.props.inputEditOrder.name,
+                this.props.inputEditOrder.driver,
+                this.props.inputEditOrder.phone,
+                this.props.inputEditOrder.ati,
+                this.props.inputEditOrder.comments,
+            );
             orderText= <div><div> Заявка № { this.props.order.id} от {dateSrting}: </div> 
                 <div>
                 <input 
-                    onChange={ (event) => this.props.changeEditInputName(event.target.value) }
-                    value={ editValueName }
+                    onChange={ (event) => this.props.changeEditInput(event) }
+                    value={ this.props.inputEditOrder.name }
                     onKeyUp={ (event) => this.editByEnter(event,resultOrder) } 
+                    autoFocus={true}
+                    name='name'
                 />
                 <input 
-                    onChange={ (event) => this.props.changeEditInputDriver(event.target.value) }
-                    value={ editValueDriver }
+                    onChange={ (event) => this.props.changeEditInput(event) }
+                    value={ this.props.inputEditOrder.driver }
                     onKeyUp={ (event) => this.editByEnter(event,resultOrder) } 
+                    name='driver'
                 />
                 <input 
-                    onChange={ (event) => this.props.changeEditInputPhone(event.target.value) }
-                    value={ editValuePhone }
+                    onChange={ (event) => this.props.changeEditInput(event) }
+                    value={ this.props.inputEditOrder.phone }
                     onKeyUp={ (event) => this.editByEnter(event,resultOrder) } 
+                    name='phone'
                 />
                 <input 
-                    onChange={ (event) => this.props.changeEditInputAti(event.target.value) }
-                    value={ editValueAti }
+                    onChange={ (event) => this.props.changeEditInput(event) }
+                    value={ this.props.inputEditOrder.ati }
                     onKeyUp={ (event) => this.editByEnter(event,resultOrder) } 
+                    name='ati'
                 />
                 <input 
-                    onChange={ (event) => this.props.changeEditInputComments(event.target.value) }
-                    value={ editValueComments }
+                    onChange={ (event) => this.props.changeEditInput(event) }
+                    value={ this.props.inputEditOrder.comments }
                     onKeyUp={ (event) => this.editByEnter(event,resultOrder) } 
+                    name='comments'
                 />
                 <button
                     onClick={ () => this.props.editOrder(this.props.order.id,resultOrder) }
@@ -85,7 +85,10 @@ export default class OrderComponent extends React.Component<OrderProps,{}> {
         if(this.props.admin===true)
             //рисуем кнопки редактировать-изменить
             return <div>{orderText} 
-                <button onClick={ () => this.props.changeEditIndex(this.props.order.id) }>Редактировать</button>
+                <button onClick={ () => {
+                    this.props.changeEditIndex(this.props.order.id)
+                 }
+                }>Редактировать</button>
                 <button onClick={ () => this.props.deleteOrder(this.props.order.id) }>Удалить</button>
             </div>
         else
